@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'screens/settings_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,6 +34,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   List<int> _numbers = [];
+  late Widget _currentScreen;
+  late Widget homeScreen;
+  late Widget settingsScreen;
 
   void _incrementCounter() {
     setState(() {
@@ -44,6 +48,9 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _numbers = List.generate(100, (index) => index);
+    homeScreen = HomeScreen(counter: _counter, numbers: _numbers);
+    settingsScreen = SettingsScreen();
+    _currentScreen = homeScreen;
   }
 
   @override
@@ -69,13 +76,18 @@ class _MyHomePageState extends State<MyHomePage> {
         }),
         title: Text(widget.title),
       ),
-      body: HomeScreen(counter: _counter, numbers: _numbers),
+      body: _currentScreen,
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(
               icon: Icon(Icons.settings), label: 'Settings'),
         ],
+        onTap: (index) {
+          setState(() {
+            _currentScreen = index == 0 ? homeScreen : settingsScreen;
+          });
+        },
       ),
       drawer: Drawer(
         child: ListView(
@@ -98,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({
     super.key,
     required int counter,
@@ -110,6 +122,21 @@ class HomeScreen extends StatelessWidget {
   final List<int> _numbers;
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _counter = 0;
+  List<int> _numbers = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _counter = widget._counter;
+    _numbers = widget._numbers;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Center(
       child: Column(
@@ -119,7 +146,7 @@ class HomeScreen extends StatelessWidget {
             'You have pushed the button this many times:',
           ),
           Text(
-            '$_counter',
+            '${widget._counter}',
             style: Theme.of(context).textTheme.headlineMedium,
           ),
           //ListView는 높이 제한 할수 있는 위젯에 넣어야 함
@@ -128,14 +155,20 @@ class HomeScreen extends StatelessWidget {
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.all(8),
-              itemCount: _numbers.length,
+              itemCount: widget._numbers.length,
               itemBuilder: (context, index) {
-                return Text(_numbers[index].toString());
+                return Text(widget._numbers[index].toString());
               },
             ),
           ),
         ],
       ),
     );
+  }
+
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
   }
 }
