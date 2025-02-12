@@ -1,8 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'screens/home_screen.dart';
 import 'screens/settings_screen.dart';
+import 'models/increment_counter.dart';
+import 'models/integer_list_generator.dart';
 
 void main() {
-  runApp(const MyApp());
+  //runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => Counter(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => IntegerListGenerator(),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -32,23 +50,16 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
   List<int> _numbers = [];
   late Widget _currentScreen;
   late Widget homeScreen;
   late Widget settingsScreen;
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   @override
   void initState() {
     super.initState();
     _numbers = List.generate(100, (index) => index);
-    homeScreen = HomeScreen(counter: _counter, numbers: _numbers);
+    homeScreen = HomeScreen(numbers: _numbers);
     settingsScreen = SettingsScreen();
     _currentScreen = homeScreen;
   }
@@ -65,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: const Icon(Icons.menu),
             onPressed: () {
               debugPrint('Menu button pressed');
-              //Scaffold.of(context).openDrawer();
+              Scaffold.of(context).openDrawer();
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Menu button pressed'),
@@ -102,73 +113,14 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () {
+          //var counter = Provider.of<Counter>(context, listen: false);
+          var counter = context.read<Counter>();
+          counter.increment();
+        },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
-  }
-}
-
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({
-    super.key,
-    required int counter,
-    required List<int> numbers,
-  })  : _counter = counter,
-        _numbers = numbers;
-
-  final int _counter;
-  final List<int> _numbers;
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  int _counter = 0;
-  List<int> _numbers = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _counter = widget._counter;
-    _numbers = widget._numbers;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          const Text(
-            'You have pushed the button this many times:',
-          ),
-          Text(
-            '${widget._counter}',
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
-          //ListView는 높이 제한 할수 있는 위젯에 넣어야 함
-          //SizeBox에 height 속성 부여해서 사용 가능
-          //Expanded 위젯을 사용하면 남은 스크린 이용해서 높이 제한 없이 사용 가능
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(8),
-              itemCount: widget._numbers.length,
-              itemBuilder: (context, index) {
-                return Text(widget._numbers[index].toString());
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
   }
 }
