@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/color_box_list.dart';
 import 'screens/input_widgets.dart';
+import 'screens/card_list.dart';
 
 import 'models/increment_counter.dart';
 import 'models/integer_list_generator.dart';
@@ -56,6 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late Widget homeScreen;
   late Widget settingsScreen;
   late Widget inputWidgetsScreen;
+  late Widget cardListScreen;
 
   @override
   void initState() {
@@ -63,6 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
     homeScreen = HomeScreen();
     settingsScreen = ColorBoxList();
     inputWidgetsScreen = InputWidgets();
+    cardListScreen = CardList();
     _currentScreen = homeScreen;
   }
 
@@ -91,10 +94,15 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: _currentScreen,
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,// item이 4개 이상일 때 사용
+        //backgroundColor: Colors.lightBlue,
+        //selectedItemColor: Colors.white,
+        //unselectedItemColor: Colors.white,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.window), label: 'ColorBox'),
           BottomNavigationBarItem(icon: Icon(Icons.input), label: 'Input'),
+          BottomNavigationBarItem(icon: Icon(Icons.input), label: 'CardList'),
         ],
         onTap: (index) {
           setState(() {
@@ -104,6 +112,8 @@ class _MyHomePageState extends State<MyHomePage> {
               _currentScreen = settingsScreen;
             } else if (index == 2) {
               _currentScreen = inputWidgetsScreen;
+            } else if (index == 3) {
+              _currentScreen = cardListScreen;
             } else {
               _currentScreen = homeScreen;
             }

@@ -45,11 +45,14 @@ class InputWidgets extends StatelessWidget {
               },
             ),
             SizedBox(height: 8),
-            Slider(
-              value: 0,
-              onChanged: (value) {
-                debugPrint('Slider value: $value');
-              },
+            SizedBox(
+              width: 400,
+              child: Slider(
+                value: 0,
+                onChanged: (value) {
+                  debugPrint('Slider value: $value');
+                },
+              ),
             ),
             SizedBox(height: 8),
             DropdownButton<String>(
@@ -68,6 +71,7 @@ class InputWidgets extends StatelessWidget {
             SizedBox(height: 8),
             SizedBox(
               height: 200,
+              width: 400,
               child: CupertinoPicker(
                 itemExtent: 32.0,
                 onSelectedItemChanged: (int index) {
